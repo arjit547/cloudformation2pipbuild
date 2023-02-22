@@ -30,9 +30,9 @@ phases:
       - docker push 875525659788.dkr.ecr.us-east-1.amazonaws.com/ia:latest
       - echo Writing image definitions file...
       - printf '[{"name":"iaf-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest > imagedefinitions1.json
-      - printf '[{"name":"ia-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/ia:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/ia:latest > imagedefinitions2.json
+      - printf '[{"name":"ia-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/ia:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/ia:latest > imagedefinitions2.json 
 
 artifacts:
     files:
-        - imagedefinitions1.json 
-        - imagedefinitions2.json 
+        - imagedefinitions1.json
+        - imagedefinitions2.json  

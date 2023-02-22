@@ -32,6 +32,4 @@ phases:
       - ls -la
 artifacts:
     files:
-        - imagedefinitions.json
-        - imagedefinitions1.json
-    discard-paths: yes
+        - **/*

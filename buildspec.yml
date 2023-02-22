@@ -21,6 +21,7 @@ phases:
       - cd service2
       - docker build -t ia -f Dockerfile .
       - docker tag ia:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/ia:latest
+      - cd ~
 
   post_build:
     commands:

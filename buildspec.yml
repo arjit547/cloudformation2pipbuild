@@ -1,7 +1,4 @@
 version: 0.2
-
-
-
 phases:
   pre_build:
     commands:
@@ -35,4 +32,6 @@ phases:
       - ls -la
 artifacts:
     files:
-        - **/*   
+        - imagedefinitions.json
+        - imagedefinitions1.json
+    discard-paths: yes

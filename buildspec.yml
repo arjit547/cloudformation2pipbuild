@@ -11,10 +11,15 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Building the Docker image...          
-      - docker build -t iaf -f ./service1/Dockerfile .
+      - echo Building the Docker image...  
+      - git clone https://github.com/arjit547/cloudformation2pipbuild.git
+      - cd cloudformation2pipbuild
+      - cd service1
+      - docker build -t iaf -f Dockerfile .
       - docker tag iaf:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest
-      - docker build -t ia -f ./service2/Dockerfile .
+      - cd .. 
+      - cd service2
+      - docker build -t ia -f Dockerfile .
       - docker tag ia:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/ia:latest
 
   post_build:

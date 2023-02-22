@@ -32,7 +32,7 @@ phases:
       - echo Writing image definitions file...
       - printf '[{"name":"iaf-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest > imagedefinitions.json 
       - printf '[{"name":"ia-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/ia:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/ia:latest > imagedefinitions1.json 
-
+      - ls -la
 artifacts:
     files:
         - imagedefinitions.json 

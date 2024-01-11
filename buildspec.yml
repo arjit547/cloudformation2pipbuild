@@ -3,22 +3,32 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 875525659788.dkr.ecr.us-east-1.amazonaws.com
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 578813437933.dkr.ecr.us-east-1.amazonaws.com
       
   build:
     commands:
       - echo Build started on `date`
-      - echo Building the Docker image...  
-      - docker build -t iaf .
-      - docker tag iaf:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest
+      - echo Building the Docker image...
+      - docker build -t tricity1 .
+      - docker tag tricity1:latest 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
+      
+      # Run Trivy with JSON output and store the report locally
+      - docker pull aquasec/trivy:latest
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy tricity1:latest --format json -o trivy-report.json
+
+      # Upload the Trivy report to S3
+      #- aws s3 cp trivy-report.json s3://your-s3-bucket/path/to/store/trivy-report.json
+      - aws s3 cp trivy-report.json s3://pipelinezapout/
+
+      # ... Rest of your build steps ...
 
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
-      - docker push 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest
+      - docker push 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
       - echo Writing image definitions file...
-      - printf '[{"name":"iaf-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest > imagedefinitions.json 
+      #- printf '[{"name":"iaf-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest > imagedefinitions.json 
 artifacts:
-    files:
-        - imagedefinitions.json
+  files:
+    #- imagedefinitions.json

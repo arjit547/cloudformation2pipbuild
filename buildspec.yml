@@ -1,5 +1,14 @@
 version: 0.2
 phases:
+  install:
+    runtime-versions:
+      docker: 18
+
+    commands:
+      # Install Trivy on the host machine
+      - curl -fsSLo /usr/local/bin/trivy https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit
+      - chmod +x /usr/local/bin/trivy
+
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
@@ -11,9 +20,6 @@ phases:
       - echo Building the Docker image...
       - docker build -t tricity1 .
       - docker tag tricity1:latest 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
-
-      # Pull Trivy image
-      - docker pull aquasec/trivy:latest
 
       # Run Trivy on the host, mount the Docker socket, and save the JSON report
       - trivy image -f json -o trivy-report.json tricity1:latest

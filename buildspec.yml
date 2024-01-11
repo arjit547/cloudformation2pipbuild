@@ -15,8 +15,11 @@ phases:
       # Pull the Trivy image
       - docker pull aquasec/trivy:latest
 
+      # Create the /workdir directory
+      - mkdir -p /workdir
+
       # Run Trivy with JSON output and store the report locally
-      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image tricity1:latest --format json -o /workdir/trivy-report.json
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/workdir aquasec/trivy image tricity1:latest --format json -o /workdir/trivy-report.json
 
       # Download Trivy HTML template
       - wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl

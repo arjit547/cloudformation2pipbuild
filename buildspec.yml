@@ -1,14 +1,5 @@
 version: 0.2
 phases:
-  install:
-    runtime-versions:
-      docker: 16
-
-    commands:
-      # Install Trivy on the host machine
-      - curl -fsSLo /usr/local/bin/trivy https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit
-      - chmod +x /usr/local/bin/trivy
-
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
@@ -21,18 +12,20 @@ phases:
       - docker build -t tricity1 .
       - docker tag tricity1:latest 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
 
-      # Run Trivy on the host, mount the Docker socket, and save the JSON report
-      - trivy image -f json -o trivy-report.json tricity1:latest
+      # Install Trivy inside the Docker image
+      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest install
+
+      # Run Trivy inside the Docker image, save JSON report
+      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format json -o /workdir/trivy-report.json
 
       # Upload the Trivy report to S3
-      - aws s3 cp trivy-report.json s3://pipelinezapout/
+      - aws s3 cp /workdir/trivy-report.json s3://pipelinezapout/
 
-      # Run Trivy HTML template to generate HTML report
-      - wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
-      - trivy image -f template --template @./html.tpl -o trivy-report.html tricity1:latest
+      # Run Trivy HTML template inside the Docker image, save HTML report
+      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format template --template @./html.tpl -o /workdir/trivy-report.html
 
       # Upload the HTML report to S3
-      - aws s3 cp trivy-report.html s3://pipelinezapout/
+      - aws s3 cp /workdir/trivy-report.html s3://pipelinezapout/
 
   post_build:
     commands:

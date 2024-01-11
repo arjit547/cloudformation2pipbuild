@@ -12,8 +12,11 @@ phases:
       - docker build -t tricity1 .
       - docker tag tricity1:latest 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
 
-      # Run Trivy with HTML output and store the report locally
-      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format html -o /workdir/trivy-report.html
+      # Run Trivy with JSON output and store the report locally
+      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format json -o /workdir/trivy-report.json
+
+      # Convert JSON report to HTML
+      - trivy --format html -o /workdir/trivy-report.html --input /workdir/trivy-report.json
 
       # Upload the HTML report to S3
       - aws s3 cp /workdir/trivy-report.html s3://pipelinezapout/

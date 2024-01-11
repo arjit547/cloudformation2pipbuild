@@ -1,4 +1,5 @@
 version: 0.2
+
 phases:
   pre_build:
     commands:
@@ -11,6 +12,9 @@ phases:
       - echo Building the Docker image...
       - docker build -t tricity1 .
       - docker tag tricity1:latest 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
+
+      # Pull the Trivy image
+      - docker pull aquasec/trivy:latest
 
       # Install Trivy inside the Docker image
       - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest install

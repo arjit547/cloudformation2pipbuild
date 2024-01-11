@@ -15,11 +15,14 @@ phases:
       # Pull the latest Trivy image
       - docker pull aquasec/trivy:latest
 
+      # Ensure the /workdir directory exists
+      - mkdir -p /workdir
+
       # Run Trivy with HTML output and store the report locally
       - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest trivy report -f html tricity1:latest > /workdir/trivy-report.html
 
       # Upload the HTML report to S3
-      - aws s3 cp trivy-report.html s3://pipelinezapout/
+      - aws s3 cp /workdir/trivy-report.html s3://pipelinezapout/
 
   post_build:
     commands:

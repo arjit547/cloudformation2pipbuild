@@ -1,4 +1,5 @@
 version: 0.2
+
 phases:
   pre_build:
     commands:
@@ -16,7 +17,7 @@ phases:
       - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format json -o /workdir/trivy-report.json
 
       # Convert JSON report to HTML
-      - trivy --format html -o /workdir/trivy-report.html --input /workdir/trivy-report.json
+      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest convert --format html -o /workdir/trivy-report.html --input /workdir/trivy-report.json
 
       # Upload the HTML report to S3
       - aws s3 cp /workdir/trivy-report.html s3://pipelinezapout/
@@ -26,6 +27,6 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
+
 artifacts:
-  files:
-    - trivy-report.html
+  files: /workdir/trivy-report.html

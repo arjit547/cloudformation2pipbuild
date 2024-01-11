@@ -16,8 +16,8 @@ phases:
       - docker pull aquasec/trivy:latest
       - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image tricity1:latest --format json > trivy-report.json
 
-      # Convert the Trivy JSON report to HTML
-      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest trivy report -f html --output /workdir/trivy-report.html tricity1:latest
+      # Convert the Trivy JSON report to HTML using shell redirection
+      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest trivy report -f html tricity1:latest > /workdir/trivy-report.html
 
       # Upload both JSON and HTML reports to S3
       - aws s3 cp trivy-report.json s3://pipelinezapout/

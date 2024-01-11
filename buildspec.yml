@@ -1,4 +1,5 @@
 version: 0.2
+
 phases:
   pre_build:
     commands:
@@ -15,24 +16,29 @@ phases:
       # Pull the Trivy image
       - docker pull aquasec/trivy:latest
 
-      # Create the /workdir directory
-      - mkdir -p /workdir
-
       # Run Trivy with JSON output and store the report locally
-      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/workdir aquasec/trivy image tricity1:latest --format json -o /workdir/trivy-report.json
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image tricity1:latest --format json > trivy-report.json
 
       # Download Trivy HTML template
       - wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
 
       # Run Trivy with HTML template and save the report
-      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format template --template @./html.tpl -o /workdir/trivy-report.html
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image tricity1:latest --format template --template @./html.tpl -o trivy-report.html
 
       # Upload the JSON and HTML reports to S3
-      - aws s3 cp /workdir/trivy-report.json s3://pipelinezapout/
-      - aws s3 cp /workdir/trivy-report.html s3://pipelinezapout/
+      - aws s3 cp trivy-report.json s3://pipelinezapout/
+      - aws s3 cp trivy-report.html s3://pipelinezapout/
 
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
+      - echo Writing image definitions file...
+      #- printf '[{"name":"iaf-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
+    - trivy-report.json
+    - trivy-report.html

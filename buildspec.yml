@@ -24,7 +24,7 @@ phases:
       - wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
 
       # Run Trivy with HTML template and save HTML report in the current directory
-      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):$(pwd) aquasec/trivy:latest image tricity1:latest --format template --template @./html.tpl -o $(pwd)/trivy-report.html
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$(pwd):/workdir" aquasec/trivy:latest image tricity1:latest --format template --template @/workdir/html.tpl -o /workdir/trivy-report.html
 
       # Upload the HTML report to S3
       - aws s3 cp trivy-report.html s3://pipelinezapout/

@@ -12,14 +12,8 @@ phases:
       - docker build -t tricity1 .
       - docker tag tricity1:latest 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
 
-      # Pull the latest Trivy image
-      - docker pull aquasec/trivy:latest
-
-      # Ensure the /workdir directory exists
-      - mkdir -p /workdir
-
       # Run Trivy with HTML output and store the report locally
-      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest trivy report -f html tricity1:latest > /workdir/trivy-report.html
+      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format html -o /workdir/trivy-report.html
 
       # Upload the HTML report to S3
       - aws s3 cp /workdir/trivy-report.html s3://pipelinezapout/
@@ -29,8 +23,6 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
-      # - echo Writing image definitions file...
-      # - printf '[{"name":"iaf-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest > imagedefinitions.json
 artifacts:
   files:
     - trivy-report.html

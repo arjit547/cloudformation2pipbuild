@@ -16,8 +16,12 @@ phases:
       - docker pull aquasec/trivy:latest
       - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image tricity1:latest --format json > trivy-report.json
 
-      # Upload the Trivy report to S3
+      # Convert the Trivy JSON report to HTML
+      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest trivy report -f html -o /workdir/trivy-report.html tricity1:latest
+
+      # Upload both JSON and HTML reports to S3
       - aws s3 cp trivy-report.json s3://pipelinezapout/
+      - aws s3 cp trivy-report.html s3://pipelinezapout/
 
       # ... Rest of your build steps ...
 
@@ -30,4 +34,6 @@ phases:
       #- printf '[{"name":"iaf-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/iaf:latest > imagedefinitions.json
 artifacts:
   files:
-    #- imagedefinitions.json
+    - imagedefinitions.json
+    - trivy-report.json
+    - trivy-report.html

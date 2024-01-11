@@ -16,13 +16,13 @@ phases:
       - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest install
 
       # Run Trivy inside the Docker image, save JSON report
-      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format json -o /workdir/trivy-report.json
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format json -o /workdir/trivy-report.json
 
       # Upload the Trivy report to S3
       - aws s3 cp /workdir/trivy-report.json s3://pipelinezapout/
 
       # Run Trivy HTML template inside the Docker image, save HTML report
-      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format template --template @./html.tpl -o /workdir/trivy-report.html
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format template --template @./html.tpl -o /workdir/trivy-report.html
 
       # Upload the HTML report to S3
       - aws s3 cp /workdir/trivy-report.html s3://pipelinezapout/

@@ -13,7 +13,7 @@ phases:
       - docker tag tricity1:latest 578813437933.dkr.ecr.us-east-1.amazonaws.com/tricity1:latest
 
       # Pull the latest Trivy image
-      - docker pull aquasec/trivy:latest
+      #- docker pull aquasec/trivy:latest
 
       # Ensure the /workdir directory exists
       - mkdir -p /workdir

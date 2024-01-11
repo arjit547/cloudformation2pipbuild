@@ -16,9 +16,6 @@ phases:
       # Pull the Trivy image
       - docker pull aquasec/trivy:latest
 
-      # Install Trivy inside the Docker image
-      - docker run --rm -v $(pwd):/workdir aquasec/trivy:latest install
-
       # Run Trivy inside the Docker image, save JSON report
       - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/workdir aquasec/trivy:latest image tricity1:latest --format json -o /workdir/trivy-report.json
 
